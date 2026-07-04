@@ -1,0 +1,13 @@
+# Supabase CLI config — used for Edge Function deployment only
+# Replace project_id after: npx supabase link --project-ref YOUR_REF
+
+project_id = "your-project-ref"
+
+[api]
+enabled = true
+
+[functions.notify-admin]
+verify_jwt = false
+
+[functions.send-student-email]
+verify_jwt = false
