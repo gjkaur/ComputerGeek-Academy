@@ -6,11 +6,11 @@ import { validateActiveSession } from '../../services/sessionGuard';
 const HEARTBEAT_MS = 60_000;
 
 export default function SessionGuard({ children }) {
-  const { user, isStudent, logout } = useApp();
+  const { user, isStudent, logout, isDemoUser } = useApp();
   const [blocked, setBlocked] = useState(null);
 
   useEffect(() => {
-    if (!user?.id || !isStudent) return;
+    if (!user?.id || !isStudent || isDemoUser) return;
 
     let cancelled = false;
 
@@ -28,7 +28,7 @@ export default function SessionGuard({ children }) {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [user?.id, isStudent, logout]);
+  }, [user?.id, isStudent, isDemoUser, logout]);
 
   if (blocked) {
     return (

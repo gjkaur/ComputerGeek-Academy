@@ -4,7 +4,9 @@ import { Loader2, Shield } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import AuthField, { inputClass } from '../../components/auth/AuthField';
 import SupabaseSetupRequired from '../../components/auth/SupabaseSetupRequired';
+import DemoCredentialsHint from '../../components/auth/DemoCredentialsHint';
 import { useApp } from '../../context/AppProvider';
+import { DEMO_INSTRUCTOR } from '../../data/demoAccounts';
 
 export default function AdminLogin() {
   const {
@@ -21,14 +23,14 @@ export default function AdminLogin() {
   const navigate = useNavigate();
 
   const [step, setStep] = useState('credentials');
-  const [form, setForm] = useState({ email: '', password: '', code: '' });
+  const [form, setForm] = useState({
+    email: DEMO_INSTRUCTOR.email,
+    password: DEMO_INSTRUCTOR.password,
+    code: '',
+  });
   const [mfaData, setMfaData] = useState(null);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  if (!isSupabaseConfigured) {
-    return <SupabaseSetupRequired />;
-  }
 
   if (authLoading) {
     return (
@@ -44,6 +46,11 @@ export default function AdminLogin() {
 
   if (isAuthenticated && !isAdmin) {
     return <Navigate to="/dashboard" replace />;
+  }
+
+  // Real MFA path still needs Supabase; demo instructor works offline
+  if (!isSupabaseConfigured && step !== 'credentials') {
+    return <SupabaseSetupRequired />;
   }
 
   const handleChange = (e) => {
@@ -114,6 +121,8 @@ export default function AdminLogin() {
             {step === 'enroll' && 'Set up two-factor authentication to continue.'}
           </p>
         </div>
+
+        {step === 'credentials' && <DemoCredentialsHint role="admin" />}
 
         {step === 'credentials' && (
           <form onSubmit={handleCredentials} className="space-y-4">

@@ -4,6 +4,7 @@ import {
   SAMPLE_VIDEO_URL,
 } from './siteContent';
 import { pythonSoftwareEngineerBootcamp } from './courses/pythonSoftwareEngineerBootcamp';
+import { demoFullstackMini } from './courses/demoFullstackMini';
 
 /** @typedef {'video'|'quiz'|'assignment'|'lab'|'reading'} LessonType */
 
@@ -74,8 +75,8 @@ function createAssignment(id, title, description, instructions) {
   return { id, title, description, instructions };
 }
 
-function createLab(id, title, description, steps, objectives) {
-  return { id, title, description, steps, objectives };
+function createLab(id, title, description, steps, objectives, extras = {}) {
+  return { id, title, description, steps, objectives, language: 'python', ...extras };
 }
 
 function createResource(id, title, fileName, fileUrl, type = 'pdf') {
@@ -670,6 +671,7 @@ const basicCourseMeta = [
 
 export const initialCourseCatalog = [
   pythonSoftwareEngineerBootcamp,
+  demoFullstackMini,
 ];
 
 // Other catalog courses temporarily removed — Python bootcamp only for now.

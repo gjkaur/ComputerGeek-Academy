@@ -5,6 +5,7 @@ import {
   createEmptyProgress,
   calculateProgress,
   isCourseComplete,
+  getFailedOrPendingLabs,
   markLessonComplete,
 } from '../utils/progress';
 import { computeExpiryDate, isEnrollmentActive, formatExpiryDate } from '../utils/enrollmentAccess';
@@ -42,6 +43,9 @@ import {
   challengeTotpFactor,
   getMfaAssuranceLevel,
 } from '../services/auth';
+import { DEMO_SESSION_KEY, matchDemoAccount } from '../data/demoAccounts';
+import { gradeLabSubmission } from '../services/labGrader';
+import { openCertificateWindow } from '../services/certificate';
 
 const AppContext = createContext(null);
 
@@ -112,6 +116,14 @@ export function AppProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    const demoUser = loadFromStorage(DEMO_SESSION_KEY, null);
+    if (demoUser?.isDemo) {
+      setUser(demoUser);
+      setAdminMfaVerified(demoUser.role === 'admin');
+      setAuthLoading(false);
+      return;
+    }
+
     if (!isSupabaseConfigured || !supabase) {
       setAuthLoading(false);
       return;
@@ -122,11 +134,19 @@ export function AppProvider({ children }) {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const stillDemo = loadFromStorage(DEMO_SESSION_KEY, null);
+      if (stillDemo?.isDemo) return;
       loadUserFromSession(session);
     });
 
     return () => subscription.unsubscribe();
   }, [loadUserFromSession]);
+
+  const applyDemoUser = useCallback((demoUser) => {
+    saveToStorage(DEMO_SESSION_KEY, demoUser);
+    setUser(demoUser);
+    setAdminMfaVerified(demoUser.role === 'admin');
+  }, []);
 
   useEffect(() => {
     saveToStorage(STORAGE_KEYS.courses, courses);
@@ -146,17 +166,30 @@ export function AppProvider({ children }) {
 
   const logout = useCallback(async () => {
     const userId = user?.id;
-    if (isSupabaseConfigured && userId) {
+    const wasDemo = user?.isDemo;
+    saveToStorage(DEMO_SESSION_KEY, null);
+    try {
+      localStorage.removeItem(DEMO_SESSION_KEY);
+    } catch {
+      /* ignore */
+    }
+    if (!wasDemo && isSupabaseConfigured && userId) {
       await releaseActiveSession(userId);
     }
-    if (isSupabaseConfigured) {
+    if (!wasDemo && isSupabaseConfigured) {
       await authSignOut();
     }
     setUser(null);
     setAdminMfaVerified(false);
-  }, [user?.id]);
+  }, [user?.id, user?.isDemo]);
 
   const studentSignUp = useCallback(async ({ email, password, fullName }) => {
+    if (matchDemoAccount(email, password)) {
+      throw new Error('That email is reserved for the demo student/instructor accounts.');
+    }
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase is not configured. Use the demo student account to explore locally.');
+    }
     const { user: newUser, session } = await signUpStudent({ email, password, fullName });
 
     try {
@@ -172,6 +205,17 @@ export function AppProvider({ children }) {
   }, [loadUserFromSession]);
 
   const studentSignIn = useCallback(async ({ email, password }) => {
+    const demo = matchDemoAccount(email, password);
+    if (demo) {
+      if (demo.role !== 'student') {
+        throw new Error('Use Admin Login for the demo instructor account.');
+      }
+      applyDemoUser(demo);
+      return;
+    }
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase is not configured. Sign in with the demo student account shown below.');
+    }
     const { session } = await signInWithPassword({ email, password });
     if (!session) throw new Error('Sign in failed.');
     await loadUserFromSession(session);
@@ -183,9 +227,20 @@ export function AppProvider({ children }) {
         throw new Error('Could not establish secure session.');
       }
     }
-  }, [loadUserFromSession]);
+  }, [loadUserFromSession, applyDemoUser]);
 
   const adminSignIn = useCallback(async ({ email, password }) => {
+    const demo = matchDemoAccount(email, password);
+    if (demo) {
+      if (demo.role !== 'admin') {
+        throw new Error('Use the student login page for the demo student account.');
+      }
+      applyDemoUser(demo);
+      return { step: 'complete' };
+    }
+    if (!isSupabaseConfigured) {
+      throw new Error('Supabase is not configured. Sign in with the demo instructor account shown below.');
+    }
     const result = await signInAdmin({ email, password });
 
     if (result.step === 'complete') {
@@ -560,44 +615,140 @@ export function AppProvider({ children }) {
     });
   }, [courses, user]);
 
-  const completeLab = useCallback((courseId, labId) => {
-    if (!user?.id) return;
+  const submitLabSolution = useCallback((courseId, labId, code) => {
+    if (!user?.id) return { passed: false, score: 0, failures: ['Not signed in.'] };
+    const course = courses.find((c) => c.id === courseId);
+    const lab = course?.labs?.find((l) => l.id === labId);
+    if (!course || !lab) return { passed: false, score: 0, failures: ['Lab not found.'] };
+
+    const result = gradeLabSubmission(lab, code);
+    const lesson = course.modules
+      .flatMap((m) => m.lessons)
+      .find((l) => l.type === 'lab' && l.labId === labId);
+
     setProgressMap((prev) => {
       const current = prev[user.id]?.[courseId] || createEmptyProgress();
-      const lesson = courses
-        .find((c) => c.id === courseId)
-        ?.modules.flatMap((m) => m.lessons)
-        .find((l) => l.type === 'lab' && l.labId === labId);
-
-      const updated = {
+      let updated = {
         ...current,
         labCompletions: {
           ...current.labCompletions,
-          [labId]: { completedAt: new Date().toISOString() },
+          [labId]: {
+            completedAt: new Date().toISOString(),
+            passed: result.passed,
+            score: result.score,
+            code,
+            failures: result.failures,
+          },
         },
       };
-
-      if (lesson) {
-        return {
-          ...prev,
-          [user.id]: {
-            ...(prev[user.id] || {}),
-            [courseId]: markLessonComplete(updated, lesson.id),
-          },
-        };
+      if (result.passed && lesson) {
+        updated = markLessonComplete(updated, lesson.id);
       }
       return {
         ...prev,
         [user.id]: { ...(prev[user.id] || {}), [courseId]: updated },
       };
     });
+
+    return result;
   }, [courses, user]);
 
+  /** @deprecated Prefer submitLabSolution — self-mark no longer unlocks certificates */
+  const completeLab = useCallback((courseId, labId) => {
+    return submitLabSolution(courseId, labId, '');
+  }, [submitLabSolution]);
+
+  const enrollAfterPayment = useCallback(
+    async ({ courseId, transactionId, amount, note = '' }) => {
+      if (!user?.id) throw new Error('Sign in required before payment.');
+      const course = courses.find((c) => c.id === courseId);
+      if (!course) throw new Error('Course not found.');
+
+      const paymentNote = note || `Dummy gateway payment ${transactionId} · ${amount}`;
+      const enrolledAt = new Date().toISOString();
+      const expiresAt = computeExpiryDate(new Date(enrolledAt));
+
+      let record = {
+        enrolledAt,
+        expiresAt,
+        courseId,
+        enrolledBy: 'payment_gateway',
+        paymentNote,
+        transactionId,
+      };
+
+      if (!user.isDemo) {
+        try {
+          const dbRecord = await saveEnrollmentToDb({
+            userId: user.id,
+            courseId,
+            paymentNote,
+          });
+          if (dbRecord) record = { ...dbRecord, transactionId };
+        } catch (err) {
+          console.warn('DB enrollment after payment failed, using local:', err);
+        }
+      }
+
+      setEnrollments((prev) => ({
+        ...prev,
+        [user.id]: {
+          ...(prev[user.id] || {}),
+          [courseId]: record,
+        },
+      }));
+      setProgressMap((prev) => ({
+        ...prev,
+        [user.id]: {
+          ...(prev[user.id] || {}),
+          [courseId]: prev[user.id]?.[courseId] || createEmptyProgress(),
+        },
+      }));
+      setEnrollmentRequests((prev) =>
+        prev.map((r) =>
+          r.userId === user.id && r.courseId === courseId && r.status === 'pending'
+            ? { ...r, status: 'enrolled', resolvedAt: enrolledAt }
+            : r,
+        ),
+      );
+
+      return record;
+    },
+    [user, courses],
+  );
+
   const downloadCertificate = useCallback((courseId) => {
-    if (!user?.id) return false;
+    if (!user?.id) return { ok: false, reason: 'not_signed_in' };
     const course = courses.find((c) => c.id === courseId);
     const progress = progressMap[user.id]?.[courseId] || createEmptyProgress();
-    if (!course || !isCourseComplete(course, progress)) return false;
+    if (!course) return { ok: false, reason: 'course_missing' };
+    if (!course.certificateEnabled) return { ok: false, reason: 'disabled' };
+
+    const pendingLabs = getFailedOrPendingLabs(course, progress);
+    if (pendingLabs.length > 0) {
+      return {
+        ok: false,
+        reason: 'labs_incomplete',
+        pendingLabs: pendingLabs.map((l) => l.title),
+      };
+    }
+    if (!isCourseComplete(course, progress)) {
+      return { ok: false, reason: 'course_incomplete' };
+    }
+
+    const labSummary = (course.labs || [])
+      .map((lab) => {
+        const entry = progress.labCompletions[lab.id];
+        return `${lab.title} (score ${entry?.score ?? 100})`;
+      })
+      .join(' · ');
+
+    const opened = openCertificateWindow({
+      studentName: user.name,
+      courseTitle: course.title,
+      issuedAt: new Date().toISOString(),
+      labSummary,
+    });
 
     setProgressMap((prev) => ({
       ...prev,
@@ -606,7 +757,8 @@ export function AppProvider({ children }) {
         [courseId]: { ...progress, certificateDownloaded: true },
       },
     }));
-    return true;
+
+    return { ok: opened, reason: opened ? 'issued' : 'popup_blocked' };
   }, [courses, progressMap, user]);
 
   const addCourse = useCallback((course) => {
@@ -682,6 +834,8 @@ export function AppProvider({ children }) {
     submitQuiz,
     submitAssignment,
     completeLab,
+    submitLabSolution,
+    enrollAfterPayment,
     downloadCertificate,
     addCourse,
     updateCourse,
@@ -690,6 +844,7 @@ export function AppProvider({ children }) {
     isApproved: user?.isApproved ?? false,
     isAdmin: user?.role === 'admin',
     isStudent: user?.role === 'student',
+    isDemoUser: !!user?.isDemo,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

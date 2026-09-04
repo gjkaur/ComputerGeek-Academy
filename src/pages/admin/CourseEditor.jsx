@@ -6,6 +6,7 @@ import { useApp } from '../../context/AppProvider';
 import { categories } from '../../data/siteContent';
 import { createEmptyCourse } from '../../data/courseCatalog';
 import { DEFAULT_THUMBNAIL, SAMPLE_VIDEO_URL } from '../../data/siteContent';
+import { fileToDataUrl } from '../../utils/mediaUpload';
 
 const inputClass =
   'w-full rounded-xl border border-navy-200 px-4 py-2.5 text-navy-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20';
@@ -15,7 +16,7 @@ export default function CourseEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getCourseById, addCourse, updateCourse } = useApp();
-  const isNew = id === 'new';
+  const isNew = !id || id === 'new';
 
   const [course, setCourse] = useState(() => {
     if (isNew) return createEmptyCourse();
@@ -23,6 +24,7 @@ export default function CourseEditor() {
   });
   const [activeTab, setActiveTab] = useState('basic');
   const [saved, setSaved] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   useEffect(() => {
     if (!isNew && !getCourseById(id)) {
@@ -37,11 +39,38 @@ export default function CourseEditor() {
     setSaved(false);
   };
 
-  const handleThumbnailUpload = (e) => {
+  const handleThumbnailUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
+    if (!file) return;
+    try {
+      setUploadError('');
+      const url = await fileToDataUrl(file);
       update('thumbnail', url);
+    } catch (err) {
+      setUploadError(err.message);
+    }
+  };
+
+  const handleVideoUpload = async (modId, lessonId, file) => {
+    if (!file) return;
+    try {
+      setUploadError('');
+      const url = await fileToDataUrl(file, { maxBytes: 6 * 1024 * 1024 });
+      update(
+        'modules',
+        course.modules.map((m) =>
+          m.id === modId
+            ? {
+                ...m,
+                lessons: m.lessons.map((l) =>
+                  l.id === lessonId ? { ...l, videoUrl: url, videoFileName: file.name } : l,
+                ),
+              }
+            : m,
+        ),
+      );
+    } catch (err) {
+      setUploadError(err.message);
     }
   };
 
@@ -108,9 +137,14 @@ export default function CourseEditor() {
         {
           id: labId,
           title: 'New Lab',
-          description: '',
-          steps: ['Step 1'],
-          objectives: ['Complete the lab'],
+          description: 'Students must submit a passing solution for the certificate.',
+          steps: ['Read the instructions', 'Write your solution', 'Submit for auto-grading'],
+          objectives: ['Pass the auto-grader'],
+          language: 'python',
+          starterCode: '# Write your solution\nprint("Hello")\n',
+          requiredSubstrings: ['print('],
+          expectedOutputContains: ['Hello'],
+          forbiddenSubstrings: [],
         },
       ]);
     }
@@ -145,6 +179,7 @@ export default function CourseEditor() {
         </Link>
         <div className="flex items-center gap-3">
           {saved && <span className="text-sm text-green-600">Saved!</span>}
+          {uploadError && <span className="text-sm text-red-600">{uploadError}</span>}
           <Button onClick={handleSave}>
             <Save className="h-4 w-4" />
             Save Course
@@ -362,26 +397,42 @@ export default function CourseEditor() {
                         }}
                       />
                       {lesson.type === 'video' && (
-                        <input
-                          className="w-48 rounded border border-navy-200 px-2 py-1 text-xs"
-                          placeholder="Video URL"
-                          value={lesson.videoUrl || ''}
-                          onChange={(e) => {
-                            update(
-                              'modules',
-                              course.modules.map((m) =>
-                                m.id === mod.id
-                                  ? {
-                                      ...m,
-                                      lessons: m.lessons.map((l) =>
-                                        l.id === lesson.id ? { ...l, videoUrl: e.target.value } : l,
-                                      ),
-                                    }
-                                  : m,
-                              ),
-                            );
-                          }}
-                        />
+                        <>
+                          <input
+                            className="w-40 rounded border border-navy-200 px-2 py-1 text-xs"
+                            placeholder="Video URL"
+                            value={lesson.videoUrl?.startsWith('data:') ? '' : lesson.videoUrl || ''}
+                            onChange={(e) => {
+                              update(
+                                'modules',
+                                course.modules.map((m) =>
+                                  m.id === mod.id
+                                    ? {
+                                        ...m,
+                                        lessons: m.lessons.map((l) =>
+                                          l.id === lesson.id
+                                            ? { ...l, videoUrl: e.target.value, videoFileName: undefined }
+                                            : l,
+                                        ),
+                                      }
+                                    : m,
+                                ),
+                              );
+                            }}
+                          />
+                          <label className="inline-flex cursor-pointer items-center gap-1 rounded border border-dashed border-navy-300 px-2 py-1 text-xs text-brand-600">
+                            <Upload className="h-3 w-3" />
+                            {lesson.videoFileName || 'Upload video'}
+                            <input
+                              type="file"
+                              accept="video/*,.mp4,.webm"
+                              className="hidden"
+                              onChange={(e) =>
+                                handleVideoUpload(mod.id, lesson.id, e.target.files?.[0])
+                              }
+                            />
+                          </label>
+                        </>
                       )}
                     </li>
                   ))}
@@ -509,10 +560,14 @@ export default function CourseEditor() {
 
         {activeTab === 'labs' && (
           <div className="space-y-4">
+            <p className="text-sm text-navy-600">
+              Students must submit a passing solution (auto-graded) before a certificate can be issued.
+              Define starter code and required substrings / expected output phrases.
+            </p>
             {(course.labs || []).map((lab, li) => (
-              <div key={lab.id} className="rounded-xl border border-navy-100 p-4">
+              <div key={lab.id} className="rounded-xl border border-navy-100 p-4 space-y-3">
                 <input
-                  className={`${inputClass} mb-2`}
+                  className={inputClass}
                   value={lab.title}
                   onChange={(e) => {
                     const updated = [...course.labs];
@@ -521,7 +576,7 @@ export default function CourseEditor() {
                   }}
                 />
                 <textarea
-                  className={`${inputClass} mb-2`}
+                  className={inputClass}
                   rows={2}
                   value={lab.description}
                   onChange={(e) => {
@@ -532,12 +587,51 @@ export default function CourseEditor() {
                 />
                 <textarea
                   className={inputClass}
-                  rows={4}
+                  rows={3}
                   placeholder="Steps (one per line)"
                   value={(lab.steps || []).join('\n')}
                   onChange={(e) => {
                     const updated = [...course.labs];
                     updated[li] = { ...lab, steps: e.target.value.split('\n').filter(Boolean) };
+                    update('labs', updated);
+                  }}
+                />
+                <label className={labelClass}>Starter code</label>
+                <textarea
+                  className={`${inputClass} font-mono text-sm`}
+                  rows={5}
+                  value={lab.starterCode || ''}
+                  onChange={(e) => {
+                    const updated = [...course.labs];
+                    updated[li] = { ...lab, starterCode: e.target.value };
+                    update('labs', updated);
+                  }}
+                />
+                <label className={labelClass}>Required substrings (one per line)</label>
+                <textarea
+                  className={`${inputClass} font-mono text-sm`}
+                  rows={2}
+                  value={(lab.requiredSubstrings || []).join('\n')}
+                  onChange={(e) => {
+                    const updated = [...course.labs];
+                    updated[li] = {
+                      ...lab,
+                      requiredSubstrings: e.target.value.split('\n').filter(Boolean),
+                    };
+                    update('labs', updated);
+                  }}
+                />
+                <label className={labelClass}>Expected output contains (one per line)</label>
+                <textarea
+                  className={`${inputClass} font-mono text-sm`}
+                  rows={2}
+                  value={(lab.expectedOutputContains || []).join('\n')}
+                  onChange={(e) => {
+                    const updated = [...course.labs];
+                    updated[li] = {
+                      ...lab,
+                      expectedOutputContains: e.target.value.split('\n').filter(Boolean),
+                    };
                     update('labs', updated);
                   }}
                 />
@@ -593,16 +687,21 @@ export default function CourseEditor() {
                   <input
                     type="file"
                     className="hidden"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.target.files?.[0];
-                      if (file) {
+                      if (!file) return;
+                      try {
+                        setUploadError('');
+                        const fileUrl = await fileToDataUrl(file);
                         const updated = [...course.resources];
                         updated[ri] = {
                           ...r,
                           fileName: file.name,
-                          fileUrl: URL.createObjectURL(file),
+                          fileUrl,
                         };
                         update('resources', updated);
+                      } catch (err) {
+                        setUploadError(err.message);
                       }
                     }}
                   />

@@ -82,7 +82,7 @@ export default function CourseDetail() {
             <div className="rounded-2xl bg-white p-8 shadow-xl">
               <p className="mb-1 text-sm text-navy-500">Tuition (CAD)</p>
               <p className="mb-1 text-3xl font-bold text-navy-900">{course.price}</p>
-              <p className="mb-6 text-sm text-navy-500">Fair Canadian pricing · offline payment · human approval</p>
+              <p className="mb-6 text-sm text-navy-500">Fair Canadian pricing · card checkout or offline payment</p>
 
               <div className="mb-6 space-y-3 border-t border-navy-100 pt-6">
                 <div className="flex items-center gap-3 text-navy-700">
@@ -131,8 +131,8 @@ export default function CourseDetail() {
               ) : (
                 <div className="flex flex-col gap-3">
                   {!isAuthenticated ? (
-                    <Button to="/login" state={{ from: `/courses/${course.id}/request` }} className="w-full">
-                      Sign In to Request Enrollment
+                    <Button to="/login" state={{ from: `/courses/${course.id}/checkout` }} className="w-full">
+                      Sign In to Pay & Enroll
                     </Button>
                   ) : !isApproved ? (
                     <Button to="/pending-approval" variant="outline" className="w-full">
@@ -143,12 +143,17 @@ export default function CourseDetail() {
                       Enrollment Request Pending
                     </Button>
                   ) : (
-                    <Button to={`/courses/${course.id}/request`} className="w-full">
-                      Request Enrollment — {course.price}
-                    </Button>
+                    <>
+                      <Button to={`/courses/${course.id}/checkout`} className="w-full">
+                        Pay & Enroll — {course.price}
+                      </Button>
+                      <Button to={`/courses/${course.id}/request`} variant="outline" className="w-full">
+                        Request offline enrollment
+                      </Button>
+                    </>
                   )}
                   <p className="text-center text-xs text-navy-500">
-                    Payment handled offline in CAD. Admin enrolls you after payment is confirmed.
+                    Pay online with the dummy card gateway, or request offline enrollment for admin confirmation.
                   </p>
                   {course.id === 'python-software-engineer-bootcamp' && (
                     <Button to="/labs/python" variant="secondary" className="w-full">

@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import PendingApproval from './pages/PendingApproval';
 import RequestEnrollment from './pages/RequestEnrollment';
+import Checkout from './pages/Checkout';
 import StudentDashboard from './pages/student/Dashboard';
 import LessonPlayer from './pages/student/LessonPlayer';
 import QuizPage from './pages/student/QuizPage';
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="courses" element={<Courses />} />
         <Route path="courses/:id" element={<CourseDetail />} />
         <Route path="courses/:courseId/request" element={<RequestEnrollment />} />
+        <Route path="courses/:courseId/checkout" element={<Checkout />} />
         <Route path="labs" element={<LabsHub />} />
         <Route path="labs/python" element={<PythonLab />} />
         <Route path="labs/java" element={<Navigate to="/labs/python" replace />} />

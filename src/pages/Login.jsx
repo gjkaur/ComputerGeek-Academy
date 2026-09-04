@@ -4,7 +4,9 @@ import { Loader2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import AuthField from '../components/auth/AuthField';
 import SupabaseSetupRequired from '../components/auth/SupabaseSetupRequired';
+import DemoCredentialsHint from '../components/auth/DemoCredentialsHint';
 import { useApp } from '../context/AppProvider';
+import { DEMO_STUDENT } from '../data/demoAccounts';
 
 export default function Login() {
   const {
@@ -22,14 +24,15 @@ export default function Login() {
   const from = location.state?.from || '/dashboard';
 
   const [mode, setMode] = useState('signin');
-  const [form, setForm] = useState({ fullName: '', email: '', password: '', confirmPassword: '' });
+  const [form, setForm] = useState({
+    fullName: '',
+    email: DEMO_STUDENT.email,
+    password: DEMO_STUDENT.password,
+    confirmPassword: '',
+  });
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  if (!isSupabaseConfigured) {
-    return <SupabaseSetupRequired />;
-  }
 
   if (authLoading) {
     return (
@@ -47,6 +50,11 @@ export default function Login() {
       return <Navigate to="/pending-approval" replace />;
     }
     return <Navigate to={from} replace />;
+  }
+
+  // Demo accounts work without Supabase; real signup still needs it
+  if (!isSupabaseConfigured && mode === 'signup') {
+    return <SupabaseSetupRequired />;
   }
 
   const handleChange = (e) => {
@@ -102,6 +110,8 @@ export default function Login() {
             Sign in to access your courses, dashboard, and learning progress.
           </p>
         </div>
+
+        <DemoCredentialsHint role="student" />
 
         <div className="mb-6 flex rounded-xl bg-navy-50 p-1">
           <button

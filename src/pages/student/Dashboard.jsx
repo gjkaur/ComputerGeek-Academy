@@ -2,8 +2,9 @@ import { Link, Navigate } from 'react-router-dom';
 import { Play, Award, BookOpen, ArrowRight, Loader2 } from 'lucide-react';
 import SessionGuard from '../../components/security/SessionGuard';
 import ProgressBar from '../../components/course/ProgressBar';
+import Button from '../../components/ui/Button';
 import { useApp } from '../../context/AppProvider';
-import { getNextLesson, isCourseComplete, getLessonPath } from '../../utils/progress';
+import { getNextLesson, isCourseComplete, getLessonPath, getFailedOrPendingLabs } from '../../utils/progress';
 import { formatExpiryDate, getDaysRemaining } from '../../utils/enrollmentAccess';
 
 export default function StudentDashboard() {
@@ -40,33 +41,21 @@ export default function StudentDashboard() {
     return <Navigate to="/admin" replace />;
   }
 
-  const handleCertificate = (courseId, courseTitle) => {
-    const ok = downloadCertificate(courseId);
-    if (ok) {
-      // Placeholder certificate download
-      const content = `
-COMPUTERGEEK ACADEMY
-Certificate of Completion
-
-This certifies that
-${user?.name}
-
-has successfully completed
-${courseTitle}
-
-Date: ${new Date().toLocaleDateString()}
-
-Dr. Gurinderjeet Kaur
-ComputerGeek Academy
-      `.trim();
-
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${courseTitle.replace(/\s+/g, '-')}-certificate.txt`;
-      a.click();
-      URL.revokeObjectURL(url);
+  const handleCertificate = (course) => {
+    const result = downloadCertificate(course.id);
+    if (result?.ok) return;
+    if (result?.reason === 'labs_incomplete') {
+      window.alert(
+        `Certificate locked until all labs are passed.\nPending: ${(result.pendingLabs || []).join(', ')}`,
+      );
+      return;
+    }
+    if (result?.reason === 'course_incomplete') {
+      window.alert('Finish all lessons, quizzes, assignments, and labs before downloading the certificate.');
+      return;
+    }
+    if (result?.reason === 'popup_blocked') {
+      window.alert('Allow pop-ups to view and print your certificate.');
     }
   };
 
@@ -96,6 +85,7 @@ ComputerGeek Academy
               const enrollment = getEnrollmentRecord(course.id);
               const nextLesson = getNextLesson(course, progress);
               const complete = isCourseComplete(course, progress);
+              const pendingLabs = getFailedOrPendingLabs(course, progress);
               const continuePath = nextLesson
                 ? getLessonPath(course.id, nextLesson)
                 : `/learn/${course.id}`;
@@ -131,6 +121,12 @@ ComputerGeek Academy
                           ` (${getDaysRemaining(enrollment.expiresAt)} days left)`}
                       </p>
                     )}
+                    {!complete && pendingLabs.length > 0 && (
+                      <p className="mb-3 text-xs text-amber-700">
+                        Certificate locked — pass {pendingLabs.length} lab
+                        {pendingLabs.length === 1 ? '' : 's'} first.
+                      </p>
+                    )}
 
                     <div className="mt-auto flex flex-col gap-2">
                       <Button to={continuePath} size="sm" className="w-full">
@@ -138,14 +134,19 @@ ComputerGeek Academy
                         {complete ? 'Review Course' : 'Continue Learning'}
                       </Button>
 
-                      {complete && course.certificateEnabled && (
+                      {course.certificateEnabled && (
                         <button
                           type="button"
-                          onClick={() => handleCertificate(course.id, course.title)}
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-brand-500 px-4 py-2 text-sm font-semibold text-brand-500 transition-colors hover:bg-brand-50"
+                          onClick={() => handleCertificate(course)}
+                          disabled={!complete}
+                          className={`inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 px-4 py-2 text-sm font-semibold transition-colors ${
+                            complete
+                              ? 'border-brand-500 text-brand-500 hover:bg-brand-50'
+                              : 'cursor-not-allowed border-navy-200 text-navy-400'
+                          }`}
                         >
                           <Award className="h-4 w-4" />
-                          Download Certificate
+                          {complete ? 'Download Certificate' : 'Certificate (labs must pass)'}
                         </button>
                       )}
 

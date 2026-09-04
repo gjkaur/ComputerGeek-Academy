@@ -33,7 +33,8 @@ export function isLessonComplete(lesson, progress) {
     return !!progress.assignmentSubmissions[lesson.assignmentId];
   }
   if (lesson.type === 'lab' && lesson.labId) {
-    return !!progress.labCompletions[lesson.labId];
+    // Certificate path: lab must be auto-graded as passed (not self-marked)
+    return progress.labCompletions[lesson.labId]?.passed === true;
   }
 
   return false;
@@ -41,7 +42,17 @@ export function isLessonComplete(lesson, progress) {
 
 export function isCourseComplete(course, progress) {
   const lessons = getAllLessons(course);
-  return lessons.length > 0 && lessons.every((l) => isLessonComplete(l, progress));
+  if (lessons.length === 0) return false;
+  if (!lessons.every((l) => isLessonComplete(l, progress))) return false;
+
+  // Explicit lab gate: every course lab must have a passing submission
+  const labs = course.labs || [];
+  if (labs.length === 0) return true;
+  return labs.every((lab) => progress.labCompletions[lab.id]?.passed === true);
+}
+
+export function getFailedOrPendingLabs(course, progress) {
+  return (course.labs || []).filter((lab) => progress.labCompletions[lab.id]?.passed !== true);
 }
 
 export function getNextLesson(course, progress) {
