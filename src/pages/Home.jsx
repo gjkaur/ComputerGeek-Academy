@@ -1,11 +1,8 @@
 import HeroSection, {
   FeaturedCoursesSection,
   WhyChooseSection,
-  CategoriesSection,
-  TestimonialsSection,
   ContactCTASection,
 } from '../components/home/HomeSections';
-import { Link } from 'react-router-dom';
 import { ArrowRight, Code2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 
@@ -18,12 +15,11 @@ function CodeLabsPromo() {
             <Code2 className="h-6 w-6" />
           </div>
           <h2 className="text-2xl font-extrabold text-navy-900 sm:text-3xl">
-            New: Visual Code Labs for beginners
+            Free Python Code Lab
           </h2>
           <p className="mt-3 text-navy-600">
-            Starting with the <strong>Python Software Engineer Bootcamp</strong> — run
-            programs online and dry-run them line by line. See every variable in memory.
-            Java lab included for concept practice.
+            Practice for the <strong>Python Software Engineer Bootcamp</strong> — dry-run
+            programs line by line and watch memory boxes update. No install required.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -36,13 +32,6 @@ function CodeLabsPromo() {
           </Button>
         </div>
       </div>
-      <p className="mx-auto mt-4 max-w-7xl px-4 text-sm text-navy-500 sm:px-6 lg:px-8">
-        Or jump to{' '}
-        <Link to="/labs/java" className="font-medium text-brand-600 hover:underline">
-          Java dry-run lab
-        </Link>
-        .
-      </p>
     </section>
   );
 }
@@ -54,8 +43,6 @@ export default function Home() {
       <CodeLabsPromo />
       <FeaturedCoursesSection />
       <WhyChooseSection />
-      <CategoriesSection />
-      <TestimonialsSection />
       <ContactCTASection />
     </>
   );

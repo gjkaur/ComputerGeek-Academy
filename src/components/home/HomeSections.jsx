@@ -28,20 +28,20 @@ export default function HeroSection() {
               className="mb-8 h-20 w-auto sm:h-24"
             />
             <h1 className="mb-6 text-4xl font-extrabold leading-tight text-navy-900 sm:text-5xl lg:text-6xl">
-              Learn In-Demand Tech Skills with{' '}
+              Python Software Engineer Bootcamp with{' '}
               <span className="gradient-text">ComputerGeek Academy</span>
             </h1>
             <p className="mb-8 max-w-xl text-lg leading-relaxed text-navy-600 sm:text-xl">
-              Self-paced recorded courses with video lectures, quizzes, assignments, and hands-on labs —
-              plus instructor-led programs in AI, Machine Learning, Cloud, MLOps, Cybersecurity, and Data Science.
+              From beginner Python to production engineering in 8 weeks — labs, APIs, databases,
+              Docker, CI/CD, and a real enterprise capstone. Practice free in the Python Code Lab.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Button to="/labs/python" size="lg">
-                Try Python Lab Free
+              <Button to="/courses/python-software-engineer-bootcamp" size="lg">
+                View Python Bootcamp
                 <ArrowRight className="h-5 w-5" />
               </Button>
-              <Button to="/courses" variant="outline" size="lg">
-                Explore Courses
+              <Button to="/labs/python" variant="outline" size="lg">
+                Try Python Lab Free
               </Button>
             </div>
             <p className="mt-4 text-sm text-navy-500">
@@ -53,10 +53,10 @@ export default function HeroSection() {
             <div className="gradient-brand absolute -inset-4 rounded-3xl opacity-10 blur-2xl" />
             <div className="relative grid grid-cols-2 gap-4">
               {[
-                { icon: 'Brain', label: 'AI & ML' },
-                { icon: 'Cloud', label: 'Cloud' },
-                { icon: 'Shield', label: 'Cybersecurity' },
-                { icon: 'Code', label: 'Programming' },
+                { icon: 'Code', label: 'Python Foundations' },
+                { icon: 'Cpu', label: 'APIs & Databases' },
+                { icon: 'Shield', label: 'Testing & Security' },
+                { icon: 'Cloud', label: 'Docker & Deploy' },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -84,18 +84,18 @@ export function FeaturedCoursesSection() {
     <section className="bg-navy-50/50 py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Featured Programs"
-          title="Popular Courses"
-          subtitle="Instructor-led programs designed to build job-ready skills in today's most in-demand technologies."
+          eyebrow="Featured Program"
+          title="Python Software Engineer Bootcamp"
+          subtitle="Our focus right now: one complete path from beginner Python to production-ready engineering."
         />
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+        <div className="mx-auto grid max-w-xl gap-8">
           {featured.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}
         </div>
         <div className="mt-12 text-center">
-          <Button to="/courses" variant="secondary">
-            View All Courses
+          <Button to="/courses/python-software-engineer-bootcamp" variant="secondary">
+            Open Bootcamp Details
             <ArrowRight className="h-5 w-5" />
           </Button>
         </div>

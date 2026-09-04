@@ -48,17 +48,12 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link to="/courses" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
-                  All Courses
-                </Link>
-              </li>
-              <li>
-                <Link to="/labs" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
-                  Code Labs (Python & Java)
+                  Python Bootcamp
                 </Link>
               </li>
               <li>
                 <Link to="/labs/python" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
-                  Python Visual Lab
+                  Python Code Lab
                 </Link>
               </li>
               <li>

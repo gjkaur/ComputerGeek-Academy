@@ -670,11 +670,10 @@ const basicCourseMeta = [
 
 export const initialCourseCatalog = [
   pythonSoftwareEngineerBootcamp,
-  genAiCourse,
-  mlFoundationsCourse,
-  mlopsCourse,
-  ...basicCourseMeta.map(generateBasicCourse),
 ];
+
+// Other catalog courses temporarily removed — Python bootcamp only for now.
+// Restore from git history when ready: genAiCourse, mlFoundationsCourse, mlopsCourse, basicCourseMeta.
 
 export function getAllLessons(course) {
   return course.modules.flatMap((m) => m.lessons);
