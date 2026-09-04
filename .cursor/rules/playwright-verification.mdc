@@ -1,0 +1,30 @@
+---
+description: Always verify UI changes with Playwright before claiming done or deploying
+alwaysApply: true
+---
+
+# Playwright verification (mandatory)
+
+For **ComputerGeek Academy**, do not ship or claim a UI/feature fix without running Playwright.
+
+## Before finishing any UI / routing / content / lab change
+
+1. Ensure Playwright is available (`npm run test:e2e` or `npx playwright test`).
+2. Run the smoke suite against the target you touched:
+   - Local: `BASE_URL=http://localhost:5173 npm run test:e2e` (start `npm run dev` first)
+   - Production: `npm run test:e2e` (defaults to https://computergeekacademy.com)
+3. If tests fail, **fix the product** — do not weaken assertions to hide regressions unless the product requirement intentionally changed.
+4. Prefer adding/updating e2e coverage when you add pages, nav, pricing, or Code Lab behavior.
+
+## Product invariants the suite guards
+
+- Python-only focus (no Java course/lab marketing)
+- Bootcamp tuition shown as **CA$999**
+- Landing + nav + course + `/labs/python` Code Lab work
+- Visual dry-run lab can Trace a beginner example
+
+## Do not
+
+- Skip Playwright because “it looks fine”
+- Deploy to Vercel/GitHub Pages without a green smoke run when UI changed
+- Reintroduce removed courses/labs without updating tests and product intent

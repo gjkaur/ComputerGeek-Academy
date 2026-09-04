@@ -4,3 +4,9 @@ dist-ssr
 *.local
 .env
 .DS_Store
+.vercel
+.env*
+playwright-report
+test-results
+blob-report
+playwright/.cache

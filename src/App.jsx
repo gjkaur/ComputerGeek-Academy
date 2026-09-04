@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import LearningLayout from './components/layout/LearningLayout';
 import AdminLayout from './components/layout/AdminLayout';
@@ -34,6 +34,7 @@ export default function App() {
         <Route path="courses/:courseId/request" element={<RequestEnrollment />} />
         <Route path="labs" element={<LabsHub />} />
         <Route path="labs/python" element={<PythonLab />} />
+        <Route path="labs/java" element={<Navigate to="/labs/python" replace />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="login" element={<Login />} />
