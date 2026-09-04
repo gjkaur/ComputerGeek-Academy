@@ -7,6 +7,7 @@ import { useApp } from '../../context/AppProvider';
 const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/courses', label: 'Courses' },
+  { to: '/labs', label: 'Code Labs' },
   { to: '/about', label: 'About Instructor' },
   { to: '/contact', label: 'Contact' },
 ];

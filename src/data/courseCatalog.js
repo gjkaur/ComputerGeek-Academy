@@ -3,6 +3,7 @@ import {
   INSTRUCTOR_NAME,
   SAMPLE_VIDEO_URL,
 } from './siteContent';
+import { pythonSoftwareEngineerBootcamp } from './courses/pythonSoftwareEngineerBootcamp';
 
 /** @typedef {'video'|'quiz'|'assignment'|'lab'|'reading'} LessonType */
 
@@ -668,6 +669,7 @@ const basicCourseMeta = [
 ];
 
 export const initialCourseCatalog = [
+  pythonSoftwareEngineerBootcamp,
   genAiCourse,
   mlFoundationsCourse,
   mlopsCourse,

@@ -36,14 +36,17 @@ export default function HeroSection() {
               plus instructor-led programs in AI, Machine Learning, Cloud, MLOps, Cybersecurity, and Data Science.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Button to="/courses" size="lg">
-                Explore Courses
+              <Button to="/labs/python" size="lg">
+                Try Python Lab Free
                 <ArrowRight className="h-5 w-5" />
               </Button>
-              <Button to="/contact" variant="outline" size="lg">
-                Contact Us
+              <Button to="/courses" variant="outline" size="lg">
+                Explore Courses
               </Button>
             </div>
+            <p className="mt-4 text-sm text-navy-500">
+              Dry-run Python in your browser — see memory step by step. No install.
+            </p>
           </div>
 
           <div className="relative hidden lg:block">

@@ -52,6 +52,16 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/labs" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
+                  Code Labs (Python & Java)
+                </Link>
+              </li>
+              <li>
+                <Link to="/labs/python" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
+                  Python Visual Lab
+                </Link>
+              </li>
+              <li>
                 <Link to="/about" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
                   About Instructor
                 </Link>
