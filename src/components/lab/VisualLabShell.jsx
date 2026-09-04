@@ -5,9 +5,11 @@ import MemoryPanel from './MemoryPanel';
 import StepControls from './StepControls';
 import OutputConsole from './OutputConsole';
 import FlowStory from './FlowStory';
+import { BOOTCAMP_LAB_WEEKS } from '../../data/labExamples';
 
 /**
- * Shared beginner dry-run lab shell (Python / Java).
+ * Shared beginner dry-run lab shell (Python).
+ * Examples are grouped by bootcamp week when week metadata is present.
  */
 export default function VisualLabShell({
   language,
@@ -21,6 +23,7 @@ export default function VisualLabShell({
 }) {
   const [code, setCode] = useState(defaultCode);
   const [activeExample, setActiveExample] = useState(examples[0]?.id || null);
+  const [weekFilter, setWeekFilter] = useState('all');
   const [tracing, setTracing] = useState(false);
   const [steps, setSteps] = useState([]);
   const [stepIndex, setStepIndex] = useState(0);
@@ -30,6 +33,22 @@ export default function VisualLabShell({
   const current = steps[stepIndex] || null;
   const prev = steps[stepIndex - 1] || null;
   const codeLines = useMemo(() => code.split('\n'), [code]);
+
+  const weeksInExamples = useMemo(() => {
+    const set = new Set(examples.map((ex) => ex.week).filter(Boolean));
+    return BOOTCAMP_LAB_WEEKS.filter((w) => set.has(w.week));
+  }, [examples]);
+
+  const filteredExamples = useMemo(() => {
+    if (weekFilter === 'all') return examples;
+    const weekNum = Number(weekFilter);
+    return examples.filter((ex) => ex.week === weekNum);
+  }, [examples, weekFilter]);
+
+  const activeMeta = useMemo(
+    () => examples.find((ex) => ex.id === activeExample) || null,
+    [examples, activeExample],
+  );
 
   const changedKeys = useMemo(() => {
     if (!current?.locals) return [];
@@ -45,6 +64,13 @@ export default function VisualLabShell({
     if (now.startsWith(before)) return now.slice(before.length);
     return now;
   }, [current, prev]);
+
+  const handleReset = useCallback(() => {
+    setSteps([]);
+    setStepIndex(0);
+    setError(null);
+    setFullStdout('');
+  }, []);
 
   const handleTrace = useCallback(async () => {
     setTracing(true);
@@ -69,11 +95,10 @@ export default function VisualLabShell({
     }
   }, [code, onRunTrace]);
 
-  const handleReset = () => {
-    setSteps([]);
-    setStepIndex(0);
-    setError(null);
-    setFullStdout('');
+  const selectExample = (ex) => {
+    setActiveExample(ex.id);
+    setCode(ex.code);
+    handleReset();
   };
 
   const displayStdout = current?.stdout ?? (steps.length ? fullStdout : '');
@@ -98,18 +123,45 @@ export default function VisualLabShell({
           )}
         </div>
 
-        <div className="mb-6 flex flex-wrap gap-2">
-          {examples.map((ex) => {
+        {weeksInExamples.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setWeekFilter('all')}
+              className={`rounded-xl px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition ${
+                weekFilter === 'all'
+                  ? 'bg-navy-900 text-white'
+                  : 'bg-white text-navy-600 ring-1 ring-navy-200 hover:text-brand-600'
+              }`}
+            >
+              All weeks
+            </button>
+            {weeksInExamples.map((w) => (
+              <button
+                key={w.week}
+                type="button"
+                onClick={() => setWeekFilter(String(w.week))}
+                className={`rounded-xl px-3 py-1.5 text-xs font-bold transition ${
+                  weekFilter === String(w.week)
+                    ? 'bg-navy-900 text-white'
+                    : 'bg-white text-navy-600 ring-1 ring-navy-200 hover:text-brand-600'
+                }`}
+                title={w.title}
+              >
+                Week {w.week}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="mb-3 flex flex-wrap gap-2">
+          {filteredExamples.map((ex) => {
             const active = activeExample === ex.id;
             return (
               <button
                 key={ex.id}
                 type="button"
-                onClick={() => {
-                  setActiveExample(ex.id);
-                  setCode(ex.code);
-                  handleReset();
-                }}
+                onClick={() => selectExample(ex)}
                 className={`rounded-full border-2 px-4 py-2 text-sm font-bold transition ${
                   active
                     ? 'border-brand-500 bg-brand-500 text-white shadow-md'
@@ -122,6 +174,10 @@ export default function VisualLabShell({
             );
           })}
         </div>
+
+        {activeMeta?.description && (
+          <p className="mb-6 text-sm leading-relaxed text-navy-600">{activeMeta.description}</p>
+        )}
 
         <div className="mb-6">
           <StepControls
@@ -137,7 +193,6 @@ export default function VisualLabShell({
           />
         </div>
 
-        {/* Big human-readable pipeline */}
         <div className="mb-6 hidden items-center justify-center gap-3 rounded-2xl border-2 border-navy-100 bg-white px-4 py-3 shadow-sm lg:flex">
           <PipelineChip label="1. Code line" tone="navy" />
           <ArrowRight className="h-6 w-6 text-brand-500" />
@@ -165,27 +220,17 @@ export default function VisualLabShell({
             />
           </div>
 
-          {/* Center flow story */}
           <div className="space-y-4">
             <FlowStory
-              language={language}
-              line={current?.line ?? null}
-              codeLine={current?.line ? codeLines[current.line - 1] || '' : ''}
+              current={current}
+              prev={prev}
+              codeLines={codeLines}
               changedKeys={changedKeys}
-              prevLocals={prev?.locals || {}}
-              locals={current?.locals || {}}
               stdoutDelta={stdoutDelta}
             />
           </div>
 
-          <div className="space-y-4">
-            <MemoryPanel
-              locals={current?.locals || {}}
-              prevLocals={prev?.locals || {}}
-              changedKeys={changedKeys}
-              emptyHint="Click Trace program, then use Step → to walk through memory changes."
-            />
-          </div>
+          <MemoryPanel locals={current?.locals || {}} changedKeys={changedKeys} />
         </div>
       </div>
     </div>
@@ -199,8 +244,6 @@ function PipelineChip({ label, tone }) {
     green: 'bg-emerald-500 text-white',
   };
   return (
-    <span className={`lab-heading rounded-full px-4 py-2 text-sm font-extrabold ${tones[tone]}`}>
-      {label}
-    </span>
+    <span className={`rounded-full px-4 py-2 text-sm font-extrabold ${tones[tone]}`}>{label}</span>
   );
 }

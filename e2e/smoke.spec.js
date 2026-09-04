@@ -33,7 +33,9 @@ test.describe('ComputerGeek Academy — Python focus smoke', () => {
     await page.goto('/labs/python');
     await expect(page.getByRole('button', { name: /Trace program/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Hello & Variables/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Swap Two Numbers/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Week 1$/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Week 8$/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /M32 · Architecture review/i })).toBeVisible();
     await expect(page.locator('textarea')).toBeVisible();
     await expect(page.getByText(/Memory/i).first()).toBeVisible();
   });
@@ -48,7 +50,7 @@ test.describe('ComputerGeek Academy — Python focus smoke', () => {
     await expect(page.getByText(/Step\s+1\s*\/\s*\d+/i)).toBeVisible({ timeout: 90_000 });
     await expect(page.getByText(/Memory boxes|Memory \(variables\)/i).first()).toBeVisible();
 
-    const stepBtn = page.getByRole('button', { name: /Step/i });
+    const stepBtn = page.getByRole('button', { name: /Step →/i });
     if (await stepBtn.isEnabled()) {
       await stepBtn.click();
     }
