@@ -26,31 +26,34 @@ const LAB = '/labs/python';
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-[88vh] overflow-hidden bg-navy-950 text-white">
+    <section className="relative min-h-[85vh] overflow-hidden bg-navy-900 text-white">
+      {/* Keep overlays dark — never wash text to unreadable */}
       <div
-        className="absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            'radial-gradient(ellipse 80% 60% at 70% 20%, rgba(0,123,255,0.45), transparent), radial-gradient(ellipse 50% 40% at 10% 80%, rgba(0,123,255,0.2), transparent)',
+          background:
+            'radial-gradient(ellipse 70% 50% at 85% 15%, rgba(0,123,255,0.35), transparent 55%), radial-gradient(ellipse 45% 35% at 0% 100%, rgba(0,123,255,0.18), transparent 50%)',
         }}
       />
       <div
-        className="absolute inset-0 opacity-[0.07]"
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}
       />
 
-      <div className="relative mx-auto flex max-w-7xl flex-col justify-center px-4 py-20 sm:px-6 lg:min-h-[88vh] lg:px-8 lg:py-28">
-        <img
-          src={`${import.meta.env.BASE_URL}logo.png`}
-          alt="ComputerGeek Academy"
-          className="mb-8 h-16 w-auto brightness-0 invert sm:h-20"
-        />
-        <p className="mb-4 font-display text-sm font-bold uppercase tracking-[0.2em] text-brand-300">
+      <div className="relative mx-auto flex max-w-7xl flex-col justify-center px-4 py-20 sm:px-6 lg:min-h-[85vh] lg:px-8 lg:py-24">
+        <div className="mb-8 inline-flex w-fit rounded-2xl bg-white p-3 shadow-lg">
+          <img
+            src={`${import.meta.env.BASE_URL}logo.png`}
+            alt="ComputerGeek Academy"
+            className="h-14 w-auto sm:h-16"
+          />
+        </div>
+        <p className="font-display mb-4 text-sm font-bold uppercase tracking-[0.18em] text-brand-300">
           ComputerGeek Academy · Python only
         </p>
-        <h1 className="font-display mb-6 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+        <h1 className="font-display mb-6 max-w-4xl text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
           Become a production-ready Python software engineer — starting from zero.
         </h1>
         <p className="mb-10 max-w-2xl text-lg leading-relaxed text-navy-100 sm:text-xl">
@@ -63,7 +66,11 @@ export default function HeroSection() {
             Enroll in the Python Bootcamp
             <ArrowRight className="h-5 w-5" />
           </Button>
-          <Button to={LAB} size="lg" variant="white">
+          <Button
+            to={LAB}
+            size="lg"
+            className="border-2 border-white/80 bg-transparent text-white hover:bg-white/10"
+          >
             Try the free Code Lab
           </Button>
         </div>
@@ -192,7 +199,11 @@ export function CodeLabSection() {
               Open Python Code Lab
               <ArrowRight className="h-5 w-5" />
             </Button>
-            <Button to={COURSE} size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+            <Button
+              to={COURSE}
+              size="lg"
+              className="border-2 border-white/80 bg-transparent text-white hover:bg-white/10"
+            >
               Bootcamp details
             </Button>
           </div>
@@ -275,7 +286,7 @@ export function CapstoneSection() {
               ))}
             </ul>
           </div>
-          <pre className="overflow-x-auto rounded-2xl bg-navy-950 p-6 font-mono text-xs leading-relaxed text-brand-100 sm:text-sm">
+          <pre className="overflow-x-auto rounded-2xl border border-navy-700 bg-navy-900 p-6 font-mono text-xs leading-relaxed text-brand-100 sm:text-sm">
 {`Client
   │
   ▼

@@ -1,30 +1,29 @@
 ---
-description: Always verify UI changes with Playwright before claiming done or deploying
+description: Always verify UI with Playwright screenshots — not just text assertions
 alwaysApply: true
 ---
 
 # Playwright verification (mandatory)
 
-For **ComputerGeek Academy**, do not ship or claim a UI/feature fix without running Playwright.
+For **ComputerGeek Academy**, do not ship or claim a UI/feature fix without running Playwright **and reviewing screenshots**.
 
 ## Before finishing any UI / routing / content / lab change
 
-1. Ensure Playwright is available (`npm run test:e2e` or `npx playwright test`).
-2. Run the smoke suite against the target you touched:
-   - Local: `BASE_URL=http://localhost:5173 npm run test:e2e` (start `npm run dev` first)
-   - Production: `npm run test:e2e` (defaults to https://computergeekacademy.com)
-3. If tests fail, **fix the product** — do not weaken assertions to hide regressions unless the product requirement intentionally changed.
-4. Prefer adding/updating e2e coverage when you add pages, nav, pricing, or Code Lab behavior.
+1. Run smoke tests: `npm run test:e2e` (defaults to https://computergeekacademy.com).
+2. Capture visuals: `npx playwright test e2e/visual-review.spec.js`
+3. **Open and Read** the PNGs under `test-results/visual-review/` with the Read tool (images).
+4. Judge contrast, brand, and layout like a human — text assertions alone are not enough.
+5. Fix product issues found in screenshots before deploying.
 
-## Product invariants the suite guards
+## Product invariants
 
-- Python-only focus (no Java course/lab marketing)
-- Bootcamp tuition shown as **CA$999**
-- Landing + nav + course + `/labs/python` Code Lab work
-- Visual dry-run lab can Trace a beginner example
+- Readable contrast (never white/light text on washed-out backgrounds)
+- Python-only focus; CA$999 tuition visible
+- Landing, bootcamp, `/labs/python` Code Lab work
+- Visual dry-run Trace works
 
 ## Do not
 
-- Skip Playwright because “it looks fine”
-- Deploy to Vercel/GitHub Pages without a green smoke run when UI changed
-- Reintroduce removed courses/labs without updating tests and product intent
+- Pass only on `getByText` / URL checks
+- Skip screenshot review
+- Deploy with known contrast/theme failures
