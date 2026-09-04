@@ -80,8 +80,9 @@ export default function CourseDetail() {
             </div>
 
             <div className="rounded-2xl bg-white p-8 shadow-xl">
-              <p className="mb-1 text-sm text-navy-500">Course Fee</p>
-              <p className="mb-6 text-3xl font-bold text-navy-900">{course.price}</p>
+              <p className="mb-1 text-sm text-navy-500">Tuition (CAD)</p>
+              <p className="mb-1 text-3xl font-bold text-navy-900">{course.price}</p>
+              <p className="mb-6 text-sm text-navy-500">Fair Canadian pricing · offline payment · human approval</p>
 
               <div className="mb-6 space-y-3 border-t border-navy-100 pt-6">
                 <div className="flex items-center gap-3 text-navy-700">
@@ -147,8 +148,14 @@ export default function CourseDetail() {
                     </Button>
                   )}
                   <p className="text-center text-xs text-navy-500">
-                    Payment handled offline. Admin enrolls you after payment is confirmed.
+                    Payment handled offline in CAD. Admin enrolls you after payment is confirmed.
                   </p>
+                  {course.id === 'python-software-engineer-bootcamp' && (
+                    <Button to="/labs/python" variant="secondary" className="w-full">
+                      <FlaskConical className="h-5 w-5" />
+                      Free Visual Code Lab
+                    </Button>
+                  )}
                   <Button
                     to={`/contact?course=${encodeURIComponent(course.title)}`}
                     variant="outline"

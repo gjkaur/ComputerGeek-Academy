@@ -23,7 +23,6 @@ import AdminStudents from './pages/admin/AdminStudents';
 import CourseEditor from './pages/admin/CourseEditor';
 import LabsHub from './pages/labs/LabsHub';
 import PythonLab from './pages/labs/PythonLab';
-import JavaLab from './pages/labs/JavaLab';
 
 export default function App() {
   return (
@@ -35,7 +34,6 @@ export default function App() {
         <Route path="courses/:courseId/request" element={<RequestEnrollment />} />
         <Route path="labs" element={<LabsHub />} />
         <Route path="labs/python" element={<PythonLab />} />
-        <Route path="labs/java" element={<JavaLab />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="login" element={<Login />} />

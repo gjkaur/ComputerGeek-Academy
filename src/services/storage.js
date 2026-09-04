@@ -1,5 +1,5 @@
 const STORAGE_KEYS = {
-  courses: 'cga_courses_v2',
+  courses: 'cga_courses_v3',
   enrollments: 'cga_enrollments',
   progress: 'cga_progress',
   enrollmentRequests: 'cga_enrollment_requests',

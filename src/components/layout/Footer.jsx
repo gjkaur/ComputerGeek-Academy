@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin } from 'lucide-react';
-import { categories, contactInfo } from '../../data/siteContent';
+import { contactInfo, BOOTCAMP_PRICE_LABEL } from '../../data/siteContent';
 
 export default function Footer() {
+  const logoSrc = `${import.meta.env.BASE_URL}logo.png`;
+
   return (
     <footer className="border-t border-navy-100 bg-navy-900 text-navy-100">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -10,34 +12,41 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block">
               <div className="mb-4 inline-block rounded-xl bg-white p-2">
-                <img
-                  src="/logo.png"
-                  alt="ComputerGeek Academy"
-                  className="h-12 w-auto"
-                />
+                <img src={logoSrc} alt="ComputerGeek Academy" className="h-12 w-auto" />
               </div>
             </Link>
             <p className="text-sm leading-relaxed text-navy-200">
-              Instructor-led technical training in AI, Machine Learning, Cloud, MLOps,
-              Cybersecurity, Programming, and Data Science.
+              ComputerGeek Academy — Python Software Engineer Bootcamp. Beginner-friendly,
+              enterprise-depth training with a free Visual Code Lab. Tuition {BOOTCAMP_PRICE_LABEL} CAD.
             </p>
           </div>
 
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white">
-              Course Categories
+              Program
             </h3>
             <ul className="space-y-2">
-              {categories.slice(0, 8).map((cat) => (
-                <li key={cat.id}>
-                  <Link
-                    to={`/courses?category=${cat.id}`}
-                    className="text-sm text-navy-200 transition-colors hover:text-brand-300"
-                  >
-                    {cat.name}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link
+                  to="/courses/python-software-engineer-bootcamp"
+                  className="text-sm text-navy-200 transition-colors hover:text-brand-300"
+                >
+                  Python Bootcamp
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/labs/python"
+                  className="text-sm text-navy-200 transition-colors hover:text-brand-300"
+                >
+                  Free Code Lab
+                </Link>
+              </li>
+              <li>
+                <Link to="/#pricing" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
+                  Pricing ({BOOTCAMP_PRICE_LABEL})
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -47,16 +56,6 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/courses" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
-                  Python Bootcamp
-                </Link>
-              </li>
-              <li>
-                <Link to="/labs/python" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
-                  Python Code Lab
-                </Link>
-              </li>
-              <li>
                 <Link to="/about" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
                   About Instructor
                 </Link>
@@ -64,6 +63,11 @@ export default function Footer() {
               <li>
                 <Link to="/contact" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
                   Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/login" className="text-sm text-navy-200 transition-colors hover:text-brand-300">
+                  Student Sign In
                 </Link>
               </li>
             </ul>
@@ -79,16 +83,16 @@ export default function Footer() {
                   href={`mailto:${contactInfo.email}`}
                   className="flex items-center gap-2 text-sm text-navy-200 transition-colors hover:text-brand-300"
                 >
-                  <Mail className="h-4 w-4 shrink-0" />
+                  <Mail className="h-4 w-4" />
                   {contactInfo.email}
                 </a>
               </li>
               <li>
                 <a
-                  href={`tel:${contactInfo.phone.replace(/\s/g, '')}`}
+                  href={`tel:${contactInfo.phone}`}
                   className="flex items-center gap-2 text-sm text-navy-200 transition-colors hover:text-brand-300"
                 >
-                  <Phone className="h-4 w-4 shrink-0" />
+                  <Phone className="h-4 w-4" />
                   {contactInfo.phone}
                 </a>
               </li>
@@ -100,8 +104,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-navy-700 pt-8 text-center text-sm text-navy-300">
-          <p>&copy; {new Date().getFullYear()} ComputerGeek Academy. All rights reserved.</p>
+        <div className="mt-12 border-t border-navy-700 pt-8 text-center text-sm text-navy-400">
+          © {new Date().getFullYear()} ComputerGeek Academy. All rights reserved.
         </div>
       </div>
     </footer>

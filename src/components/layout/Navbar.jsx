@@ -6,8 +6,8 @@ import { useApp } from '../../context/AppProvider';
 
 const navLinks = [
   { to: '/', label: 'Home' },
-  { to: '/courses', label: 'Courses' },
-  { to: '/labs', label: 'Code Labs' },
+  { to: '/courses/python-software-engineer-bootcamp', label: 'Python Bootcamp' },
+  { to: '/labs/python', label: 'Code Lab' },
   { to: '/about', label: 'About Instructor' },
   { to: '/contact', label: 'Contact' },
 ];
@@ -20,7 +20,11 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-navy-100 bg-white/95 backdrop-blur-md">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-3 transition-opacity hover:opacity-90">
-          <img src="/logo.png" alt="ComputerGeek Academy" className="h-12 w-auto sm:h-14" />
+          <img
+            src={`${import.meta.env.BASE_URL}logo.png`}
+            alt="ComputerGeek Academy"
+            className="h-12 w-auto sm:h-14"
+          />
         </Link>
 
         <div className="hidden items-center gap-1 lg:flex">
@@ -88,8 +92,8 @@ export default function Navbar() {
             </Button>
           )}
 
-          <Button to="/courses" size="sm" className="ml-1">
-            Explore Courses
+          <Button to="/courses/python-software-engineer-bootcamp" size="sm" className="ml-1">
+            Enroll — CA$999
           </Button>
         </div>
 
@@ -140,8 +144,12 @@ export default function Navbar() {
                 Sign In
               </NavLink>
             )}
-            <Button to="/courses" className="mt-2 w-full" onClick={() => setMobileOpen(false)}>
-              Explore Courses
+            <Button
+              to="/courses/python-software-engineer-bootcamp"
+              className="mt-2 w-full"
+              onClick={() => setMobileOpen(false)}
+            >
+              Enroll — CA$999
             </Button>
           </div>
         </div>

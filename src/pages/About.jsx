@@ -3,11 +3,11 @@ import Button from '../components/ui/Button';
 import SectionHeading from '../components/ui/SectionHeading';
 
 const expertise = [
-  { icon: GraduationCap, label: 'Artificial Intelligence' },
-  { icon: Microscope, label: 'Machine Learning & MLOps' },
-  { icon: BookOpen, label: 'Cloud Computing' },
-  { icon: Briefcase, label: 'Cybersecurity' },
-  { icon: Award, label: 'Programming & Data Science' },
+  { icon: GraduationCap, label: 'Python Software Engineering' },
+  { icon: BookOpen, label: 'APIs · FastAPI · Databases' },
+  { icon: Briefcase, label: 'Testing · Docker · CI/CD' },
+  { icon: Microscope, label: 'Production & Observability' },
+  { icon: Award, label: 'Beginner → Enterprise teaching' },
 ];
 
 const credentials = [

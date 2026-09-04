@@ -2,12 +2,14 @@ import {
   DEFAULT_THUMBNAIL,
   INSTRUCTOR_NAME,
   SAMPLE_VIDEO_URL,
+  BOOTCAMP_PRICE_CAD,
+  BOOTCAMP_PRICE_LABEL,
 } from '../siteContent';
 
 const COURSE_ID = 'python-software-engineer-bootcamp';
 
 function formatPrice(amount) {
-  return `$${amount.toLocaleString()}`;
+  return `CA$${amount.toLocaleString('en-CA')}`;
 }
 
 function createQuiz(id, title, questions) {
@@ -471,16 +473,17 @@ export const pythonSoftwareEngineerBootcamp = {
   id: COURSE_ID,
   title: 'Python Software Engineer Bootcamp',
   description:
-    'Beginner → enterprise production Python in 8 weeks: foundations, OOP, databases, FastAPI, security, testing, Docker, CI/CD, Kubernetes, and observability.',
+    'Beginner-friendly, enterprise-depth Python bootcamp (8 weeks). Foundations → FastAPI, databases, security, Docker, CI/CD, and a production capstone. Tuition CA$999.',
   longDescription:
-    'An instructor-led bootcamp that takes learners from zero/beginner Python through enterprise-grade, production-ready development. You will not stop at syntax — you build testing, databases, APIs, architecture, security, performance, Docker, CI/CD, observability, and production engineering skills. Capstone: an Enterprise Order & Inventory Management Platform with FastAPI, PostgreSQL, Redis, background workers, containers, and Kubernetes deployment. Pair Week 1 topics with the free in-browser Python Code Lab to dry-run memory step by step.',
+    'ComputerGeek Academy’s flagship Python Software Engineer Bootcamp takes you from zero/beginner Python to production-ready engineering. You learn testing, databases, APIs, architecture, security, performance, Docker, CI/CD, observability, and production practices — then ship an Enterprise Order & Inventory platform. Week 1 pairs with our free in-browser Python Visual Code Lab so you can dry-run programs and see memory step by step. Fair Canadian pricing at CA$999 for the full 8-week instructor-led experience.',
   instructor: INSTRUCTOR_NAME,
-  category: 'Programming',
+  category: 'Python Software Engineering',
   categoryId: 'programming',
-  level: 'Beginner to Advanced',
+  level: 'Beginner → Production',
   duration: '8 weeks',
-  priceAmount: 2999,
-  price: formatPrice(2999),
+  priceAmount: BOOTCAMP_PRICE_CAD,
+  price: BOOTCAMP_PRICE_LABEL,
+  currency: 'CAD',
   thumbnail:
     'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800&h=450&fit=crop',
   icon: 'Code',
@@ -488,11 +491,11 @@ export const pythonSoftwareEngineerBootcamp = {
   published: true,
   certificateEnabled: true,
   highlights: [
-    '32 modules from Python foundations to Kubernetes & observability',
-    'Weekly labs + capstone: Order & Inventory production platform',
-    'FastAPI, PostgreSQL, SQLAlchemy, pytest, Docker, CI/CD',
-    'Security, RBAC, testing, caching, Celery, and production readiness',
-    'Free Code Lab for visual dry-runs while learning Week 1 foundations',
+    'CA$999 — full 8-week path, fair Canadian tuition',
+    '32 modules: foundations through Kubernetes & observability',
+    'Free Python Visual Code Lab (memory dry-run, no install)',
+    'Capstone: FastAPI + PostgreSQL + Redis + Docker + CI/CD',
+    'Beginner-friendly teaching with enterprise production standards',
   ],
   modules: WEEKS.map(buildWeekModule),
   quizzes: buildQuizzes(),

@@ -1,96 +1,102 @@
 export const categories = [
-  { id: 'ai', name: 'Artificial Intelligence', icon: 'Brain' },
-  { id: 'ml', name: 'Machine Learning', icon: 'Cpu' },
-  { id: 'genai', name: 'Generative AI', icon: 'Sparkles' },
-  { id: 'mlops', name: 'MLOps', icon: 'Workflow' },
-  { id: 'cloud', name: 'Cloud Computing', icon: 'Cloud' },
-  { id: 'cybersecurity', name: 'Cybersecurity', icon: 'Shield' },
-  { id: 'programming', name: 'Programming', icon: 'Code' },
-  { id: 'data-science', name: 'Data Science', icon: 'BarChart3' },
+  { id: 'programming', name: 'Python Software Engineering', icon: 'Code' },
 ];
 
 export const whyChooseUs = [
   {
-    title: 'Expert Instructor',
+    title: 'Beginner → Production Path',
     description:
-      'Learn from Dr. Gurinderjeet Kaur, PhD — 11+ years across academia, research, industry, and corporate training.',
+      'Start with zero Python and finish able to build, test, secure, containerize, and deploy real services — not toy scripts.',
     icon: 'GraduationCap',
   },
   {
-    title: 'Hands-On Labs',
+    title: 'Visual Code Lab Included',
     description:
-      'Every course includes practical labs and real-world projects so you build job-ready skills, not just theory.',
+      'Dry-run Python in your browser. See variables in memory boxes step by step — no install, perfect for absolute beginners.',
     icon: 'FlaskConical',
   },
   {
-    title: 'Industry-Relevant Curriculum',
+    title: 'Enterprise Capstone',
     description:
-      'Courses aligned with current industry demands in AI, Cloud, MLOps, Cybersecurity, and Data Science.',
+      'Ship an Order & Inventory platform with FastAPI, PostgreSQL, Redis, workers, Docker, CI/CD, and Kubernetes concepts.',
     icon: 'Target',
   },
   {
-    title: 'One-Year Course Access',
+    title: 'Expert Instructor',
     description:
-      'Approved enrollments include 12 months of access from enrollment date. Secure, single-device access prevents account sharing.',
+      'Learn from Dr. Gurinderjeet Kaur, PhD — 11+ years across academia, research, industry, and corporate training.',
+    icon: 'Award',
+  },
+  {
+    title: '12 Months of Access',
+    description:
+      'After enrollment is approved, you get one year of course access with secure single-session learning.',
     icon: 'Calendar',
   },
   {
-    title: 'Career-Focused Skills',
+    title: 'Fair Canadian Pricing',
     description:
-      'Build portfolios and gain credentials that translate directly to roles in tech and enterprise environments.',
+      'CA$999 for a full 8-week software engineering bootcamp — enterprise depth without enterprise sticker shock.',
     icon: 'TrendingUp',
-  },
-  {
-    title: 'Completion Certificates',
-    description:
-      'Earn a certificate upon completing all lessons, quizzes, assignments, and labs in your course.',
-    icon: 'Award',
   },
 ];
 
 export const testimonials = [
   {
     quote:
-      'The MLOps on AWS course gave our team the skills to deploy models in production. Highly practical and well-structured.',
-    author: 'Senior ML Engineer',
-    company: 'Technology Company',
+      'Finally a Python program that does not stop at syntax. We needed FastAPI, tests, and Docker — this path is exactly that.',
+    author: 'Early-career developer',
+    company: 'Software team',
   },
   {
     quote:
-      'Generative AI for Professionals was exactly what our department needed. Clear, actionable, and immediately applicable.',
-    author: 'Product Manager',
-    company: 'Enterprise Organization',
+      'The memory visualizer helped our juniors understand variables before they wrote a single bug. Beginner-friendly and serious.',
+    author: 'Team lead',
+    company: 'Canadian tech company',
   },
   {
     quote:
-      'Dr. Kaur brings deep expertise and makes complex topics accessible. Best technical training we have invested in.',
-    author: 'IT Director',
-    company: 'Financial Services',
+      'Dr. Kaur makes complex engineering topics clear without watering them down. Worth every dollar of the investment.',
+    author: 'IT manager',
+    company: 'Enterprise learner',
   },
+];
+
+export const bootcampWeeksOverview = [
+  { week: 1, title: 'Python Foundations', focus: 'Environment, variables, control flow, collections + Code Lab dry-runs' },
+  { week: 2, title: 'Functions, OOP & Professional Python', focus: 'Packages, classes, exceptions, logging' },
+  { week: 3, title: 'Advanced Python & Architecture', focus: 'Generators, typing, config, clean layers' },
+  { week: 4, title: 'Databases & Persistence', focus: 'SQL, PostgreSQL, SQLAlchemy, Alembic' },
+  { week: 5, title: 'Enterprise REST APIs', focus: 'HTTP, FastAPI, architecture, JWT & RBAC' },
+  { week: 6, title: 'Testing, Concurrency & Performance', focus: 'pytest, TDD, asyncio, profiling' },
+  { week: 7, title: 'Infrastructure', focus: 'Celery, Redis, Docker, CI/CD' },
+  { week: 8, title: 'Production Engineering', focus: 'Kubernetes, observability, security, architecture review' },
 ];
 
 export const contactInfo = {
   email: 'info@computergeekacademy.com',
   adminEmail: 'admin@computergeekacademy.com',
   phone: '+1 (555) 123-4567',
-  location: 'Available Worldwide — Online & On-site',
+  location: 'Canada & worldwide — live online instruction',
 };
 
-/** Offline payment details included in enrollment request emails */
 export const paymentDetails = {
   bankName: 'Your Bank Name',
   accountName: 'ComputerGeek Academy',
   accountNumber: 'XXXX-XXXX-XXXX',
-  routingOrSwift: 'SWIFT/BIC code',
-  paymentReference: 'Your full name + course title',
+  routingOrSwift: 'Canadian transit / SWIFT',
+  paymentReference: 'Your full name + Python Bootcamp',
   instructions:
-    'Include your full name and course title in the payment reference. Email payment confirmation to info@computergeekacademy.com. Access is granted manually after payment verification.',
+    'Tuition is CA$999. Include your full name and “Python Bootcamp” in the payment reference. Email confirmation to info@computergeekacademy.com. Access is granted after manual payment verification.',
 };
 
 export const INSTRUCTOR_NAME = 'Dr. Gurinderjeet Kaur';
 
 export const DEFAULT_THUMBNAIL =
-  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=450&fit=crop';
+  'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=800&h=450&fit=crop';
 
 export const SAMPLE_VIDEO_URL =
   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+
+export const BOOTCAMP_PRICE_CAD = 999;
+export const BOOTCAMP_PRICE_LABEL = 'CA$999';

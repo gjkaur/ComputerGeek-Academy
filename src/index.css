@@ -21,8 +21,9 @@
   --color-brand-600: #0062cc;
   --color-brand-700: #004a99;
 
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-lab: 'DM Sans', 'Inter', system-ui, sans-serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', 'DM Sans', system-ui, sans-serif;
+  --font-lab: 'DM Sans', system-ui, sans-serif;
   --font-lab-display: 'Space Grotesk', 'DM Sans', system-ui, sans-serif;
   --font-lab-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
@@ -38,6 +39,11 @@
 }
 
 @layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
   .gradient-brand {
     background: linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-navy-900) 100%);
   }
