@@ -24,6 +24,7 @@ import AdminStudents from './pages/admin/AdminStudents';
 import CourseEditor from './pages/admin/CourseEditor';
 import LabsHub from './pages/labs/LabsHub';
 import PythonLab from './pages/labs/PythonLab';
+import LabWorkspaceLayout from './components/layout/LabWorkspaceLayout';
 
 export default function App() {
   return (
@@ -35,14 +36,17 @@ export default function App() {
         <Route path="courses/:courseId/request" element={<RequestEnrollment />} />
         <Route path="courses/:courseId/checkout" element={<Checkout />} />
         <Route path="labs" element={<LabsHub />} />
-        <Route path="labs/python" element={<PythonLab />} />
-        <Route path="labs/java" element={<Navigate to="/labs/python" replace />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
         <Route path="login" element={<Login />} />
         <Route path="pending-approval" element={<PendingApproval />} />
         <Route path="dashboard" element={<StudentDashboard />} />
         <Route path="admin/login" element={<AdminLogin />} />
+      </Route>
+
+      <Route element={<LabWorkspaceLayout />}>
+        <Route path="labs/python" element={<PythonLab />} />
+        <Route path="labs/java" element={<Navigate to="/labs/python" replace />} />
       </Route>
 
       <Route element={<Layout />}>

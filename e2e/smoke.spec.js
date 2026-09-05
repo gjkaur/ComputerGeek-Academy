@@ -32,12 +32,14 @@ test.describe('ComputerGeek Academy — Python focus smoke', () => {
   test('Python Code Lab loads editor and examples', async ({ page }) => {
     await page.goto('/labs/python');
     await expect(page.getByRole('button', { name: /Trace program/i })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: /lab modules/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Hello & Variables/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /^Week 1$/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /^Week 8$/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Week 8/i }).first()).toBeVisible();
+    await page.getByRole('button', { name: /Week 8/i }).first().click();
     await expect(page.getByRole('button', { name: /M32 · Architecture review/i })).toBeVisible();
     await expect(page.locator('textarea')).toBeVisible();
     await expect(page.getByText(/Memory/i).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /Exit lab/i })).toBeVisible();
   });
 
   test('Python Code Lab can trace a simple program', async ({ page }) => {

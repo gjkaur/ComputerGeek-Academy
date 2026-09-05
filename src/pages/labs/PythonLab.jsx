@@ -9,10 +9,10 @@ export default function PythonLab() {
   return (
     <VisualLabShell
       language="python"
-      badge="Code Lab · Bootcamp-aligned"
+      badge="Bootcamp lab"
       title="Python Visual Dry-Run Lab"
-      subtitle="Practice samples mapped to all 8 weeks of the Python Software Engineer Bootcamp — from variables and OOP through simulated APIs, queues, caching, and production checks. Step through memory like a dry run on paper."
-      tip="Tip: Filter by Week 1–8, pick a module sample, then click Trace program (first load downloads a tiny Python engine). Later weeks use in-browser simulations of FastAPI/DB/Docker concepts — no install required."
+      subtitle="Pick a module from the left index, then Trace and Step — controls stay on screen."
+      tip="Hide the module panel for a wider workspace. Esc toggles the index. First Trace downloads a tiny Python engine."
       examples={pythonExamples}
       defaultCode={pythonExamples[0].code}
       onRunTrace={onRunTrace}

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 /**
@@ -10,6 +10,7 @@ export default function LabCodeEditor({
   activeLine = null,
   language = 'python',
   readOnly = false,
+  fill = false,
 }) {
   const gutterRef = useRef(null);
   const highlightRef = useRef(null);
@@ -24,10 +25,26 @@ export default function LabCodeEditor({
     if (highlightRef.current) highlightRef.current.scrollTop = top;
   };
 
+  useEffect(() => {
+    if (activeLine == null || !textareaRef.current) return;
+    const el = textareaRef.current;
+    const target = (activeLine - 1) * LINE;
+    const viewTop = el.scrollTop;
+    const viewBottom = viewTop + el.clientHeight;
+    if (target < viewTop || target + LINE > viewBottom) {
+      el.scrollTop = Math.max(0, target - el.clientHeight / 3);
+      syncScroll();
+    }
+  }, [activeLine]);
+
   return (
-    <div className="lab-panel overflow-hidden rounded-2xl border-2 border-navy-800 bg-navy-900 shadow-xl">
-      <div className="flex items-center justify-between border-b border-white/10 bg-navy-950 px-4 py-3">
-        <span className="lab-heading text-sm font-bold uppercase tracking-widest text-brand-300">
+    <div
+      className={`lab-panel flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border-2 border-navy-800 bg-navy-900 shadow-xl ${
+        fill ? '' : ''
+      }`}
+    >
+      <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-navy-950 px-3 py-2 sm:px-4 sm:py-3">
+        <span className="lab-heading text-xs font-bold uppercase tracking-widest text-brand-300 sm:text-sm">
           {language === 'python' ? 'Python' : 'Java'} code
         </span>
         {activeLine != null ? (
@@ -40,10 +57,14 @@ export default function LabCodeEditor({
           <span className="text-xs font-semibold text-navy-300">Type here · runs in browser</span>
         )}
       </div>
-      <div className="relative flex max-h-[460px] min-h-[300px] lab-mono text-[15px] leading-[28px]">
+      <div
+        className={`relative flex min-h-0 flex-1 lab-mono text-[15px] leading-[28px] ${
+          fill ? '' : 'max-h-[460px] min-h-[300px]'
+        }`}
+      >
         <div
           ref={gutterRef}
-          className="w-14 shrink-0 overflow-hidden border-r border-white/10 bg-black/40 py-3 text-right text-navy-400"
+          className="w-12 shrink-0 overflow-hidden border-r border-white/10 bg-black/40 py-3 text-right text-navy-400 sm:w-14"
           aria-hidden
         >
           {Array.from({ length: lineCount }, (_, idx) => {
@@ -63,7 +84,7 @@ export default function LabCodeEditor({
             );
           })}
         </div>
-        <div className="relative min-w-0 flex-1">
+        <div className="relative min-h-0 min-w-0 flex-1">
           <div
             ref={highlightRef}
             className="pointer-events-none absolute inset-0 overflow-hidden py-3"
@@ -87,7 +108,11 @@ export default function LabCodeEditor({
             onScroll={syncScroll}
             readOnly={readOnly}
             spellCheck={false}
-            className="relative z-10 h-[300px] max-h-[460px] min-h-[300px] w-full resize-none overflow-auto bg-transparent px-4 py-3 font-medium text-[#e8f4ff] outline-none caret-brand-300 sm:h-[380px]"
+            className={`relative z-10 w-full resize-none overflow-auto bg-transparent px-3 py-3 font-medium text-[#e8f4ff] outline-none caret-brand-300 sm:px-4 ${
+              fill
+                ? 'absolute inset-0 h-full'
+                : 'h-[300px] max-h-[460px] min-h-[300px] sm:h-[380px]'
+            }`}
             style={{ lineHeight: `${LINE}px`, fontSize: 15 }}
             aria-label={`${language} code editor`}
           />

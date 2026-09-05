@@ -24,10 +24,15 @@ export default function FlowStory({
   locals = {},
   stdoutDelta = '',
   language = 'python',
+  fill = false,
 }) {
   if (line == null) {
     return (
-      <div className="lab-panel rounded-2xl border-2 border-dashed border-navy-200 bg-white/80 p-5">
+      <div
+        className={`lab-panel flex h-full items-center justify-center rounded-2xl border-2 border-dashed border-navy-200 bg-white/80 ${
+          fill ? 'p-4' : 'p-5'
+        }`}
+      >
         <p className="lab-body text-center text-navy-500">
           Trace the program, then watch the arrow flow:
           <span className="mt-2 flex flex-wrap items-center justify-center gap-2 font-semibold text-navy-800">
@@ -47,13 +52,13 @@ export default function FlowStory({
   }));
 
   return (
-    <div className="lab-panel overflow-hidden rounded-2xl border-2 border-brand-200 bg-gradient-to-br from-white via-brand-50/40 to-white shadow-md">
-      <div className="flex items-center gap-2 border-b border-brand-100 bg-brand-500 px-4 py-3 text-white">
+    <div className="lab-panel flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border-2 border-brand-200 bg-gradient-to-br from-white via-brand-50/40 to-white shadow-md">
+      <div className="flex shrink-0 items-center gap-2 border-b border-brand-100 bg-brand-500 px-4 py-2.5 text-white">
         <Sparkles className="h-5 w-5" />
-        <h3 className="lab-heading text-lg font-bold tracking-tight">Step flow</h3>
+        <h3 className="lab-heading text-base font-bold tracking-tight">Step flow</h3>
       </div>
 
-      <div className="space-y-0 p-4 sm:p-5">
+      <div className="min-h-0 flex-1 space-y-0 overflow-y-auto overscroll-contain p-3 sm:p-4">
         {/* 1. Code */}
         <div className="lab-flow-card flex gap-3 rounded-xl border border-navy-100 bg-navy-900 p-4 text-white">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-500 text-base font-extrabold">
