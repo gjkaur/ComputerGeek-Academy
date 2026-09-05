@@ -3,3 +3,10 @@ test-results
 node_modules
 .git
 .cursor
+curriculum
+slides
+dist
+scripts
+supabase
+*.pptx
+*.mp4
