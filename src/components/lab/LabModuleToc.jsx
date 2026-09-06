@@ -3,7 +3,8 @@ import { ChevronDown, ChevronRight, PanelsTopLeft } from 'lucide-react';
 import { BOOTCAMP_LAB_WEEKS } from '../../data/labExamples';
 
 /**
- * Collapsible left TOC: Week → Module title → 5 exercises.
+ * Collapsible left TOC: Week → Module → exercises.
+ * Readable font sizes only — click to expand and show the full title/description.
  */
 export default function LabModuleToc({
   examples,
@@ -39,6 +40,7 @@ export default function LabModuleToc({
   const [expandedModules, setExpandedModules] = useState(
     () => new Set(active?.module ? [`${active.week}-${active.module}`] : ['1-1']),
   );
+  const [detailKey, setDetailKey] = useState(null);
 
   const toggleWeek = (week) => {
     setExpandedWeeks((prev) => {
@@ -62,12 +64,13 @@ export default function LabModuleToc({
   const selectExercise = (ex) => {
     setExpandedWeeks((prev) => new Set(prev).add(ex.week));
     setExpandedModules((prev) => new Set(prev).add(`${ex.week}-${ex.module}`));
+    setDetailKey(ex.id);
     onSelect(ex);
   };
 
   if (!open) {
     return (
-      <div className="flex w-11 shrink-0 flex-col border-r border-navy-200 bg-navy-900">
+      <div className="flex w-12 shrink-0 flex-col border-r border-navy-200 bg-navy-900">
         <button
           type="button"
           onClick={onToggle}
@@ -82,40 +85,48 @@ export default function LabModuleToc({
   }
 
   return (
-    <aside className="flex w-[min(100%,300px)] shrink-0 flex-col border-r border-navy-200 bg-navy-950 text-white sm:w-80">
-      <div className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-3">
+    <aside className="flex w-[min(100%,22rem)] shrink-0 flex-col border-r border-navy-200 bg-navy-950 text-white sm:w-96">
+      <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-4">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-brand-300">Index</p>
-          <p className="text-sm font-bold">Modules · 5 exercises each</p>
+          <p className="text-sm font-bold uppercase tracking-wider text-brand-300">Index</p>
+          <p className="text-base font-bold">Modules · 5 exercises each</p>
         </div>
         <button
           type="button"
           onClick={onToggle}
-          className="rounded-lg px-2 py-1 text-xs font-semibold text-navy-200 hover:bg-white/10 hover:text-white"
+          className="rounded-lg px-3 py-1.5 text-sm font-semibold text-navy-200 hover:bg-white/10 hover:text-white"
           title="Hide module index"
         >
           Hide
         </button>
       </div>
 
-      <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-2" aria-label="Lab modules">
+      <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3" aria-label="Lab modules">
         {weeks.map((week) => {
           const weekOpen = expandedWeeks.has(week.week);
+          const weekDetail = detailKey === `week-${week.week}`;
           return (
-            <div key={week.week} className="mb-1">
+            <div key={week.week} className="mb-2">
               <button
                 type="button"
-                onClick={() => toggleWeek(week.week)}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-white/10"
+                onClick={() => {
+                  toggleWeek(week.week);
+                  setDetailKey(`week-${week.week}`);
+                }}
+                className="flex w-full items-start gap-2 rounded-xl px-3 py-2.5 text-left hover:bg-white/10"
               >
                 {weekOpen ? (
-                  <ChevronDown className="h-4 w-4 shrink-0 text-brand-300" />
+                  <ChevronDown className="mt-1 h-5 w-5 shrink-0 text-brand-300" />
                 ) : (
-                  <ChevronRight className="h-4 w-4 shrink-0 text-brand-300" />
+                  <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-brand-300" />
                 )}
                 <span className="min-w-0">
-                  <span className="block text-xs font-extrabold text-brand-300">Week {week.week}</span>
-                  <span className="block truncate text-[11px] text-navy-200">{week.title}</span>
+                  <span className="block text-base font-extrabold text-brand-300">
+                    Week {week.week}
+                  </span>
+                  {weekDetail || weekOpen ? (
+                    <span className="mt-1 block text-sm leading-snug text-navy-100">{week.title}</span>
+                  ) : null}
                 </span>
               </button>
 
@@ -123,45 +134,68 @@ export default function LabModuleToc({
                 week.modules.map((mod) => {
                   const modKey = `${week.week}-${mod.module}`;
                   const modOpen = expandedModules.has(modKey);
+                  const modDetail = detailKey === `mod-${modKey}`;
                   return (
-                    <div key={modKey} className="mb-1 ml-2 border-l border-white/10 pl-2">
+                    <div key={modKey} className="mb-1 ml-3 border-l-2 border-white/15 pl-3">
                       <button
                         type="button"
-                        onClick={() => toggleModule(week.week, mod.module)}
-                        className="flex w-full items-start gap-1.5 rounded-md px-1.5 py-1.5 text-left hover:bg-white/10"
+                        onClick={() => {
+                          toggleModule(week.week, mod.module);
+                          setDetailKey(`mod-${modKey}`);
+                        }}
+                        className="flex w-full items-start gap-2 rounded-xl px-2 py-2 text-left hover:bg-white/10"
                       >
                         {modOpen ? (
-                          <ChevronDown className="mt-0.5 h-3.5 w-3.5 shrink-0 text-navy-300" />
+                          <ChevronDown className="mt-1 h-5 w-5 shrink-0 text-navy-200" />
                         ) : (
-                          <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-navy-300" />
+                          <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-navy-200" />
                         )}
                         <span className="min-w-0">
-                          <span className="block text-[11px] font-bold text-white">
+                          <span className="block text-base font-bold text-white">
                             Module {mod.module}
                           </span>
-                          <span className="block text-[10px] leading-snug text-navy-300">
-                            {mod.moduleTitle}
-                          </span>
+                          {(modDetail || modOpen) && (
+                            <span className="mt-1 block text-sm leading-snug text-navy-100">
+                              {mod.moduleTitle}
+                            </span>
+                          )}
                         </span>
                       </button>
 
                       {modOpen && (
-                        <ul className="mb-2 ml-3 space-y-0.5 border-l border-white/10 pl-2">
+                        <ul className="mb-3 ml-2 space-y-1 border-l-2 border-white/10 pl-3">
                           {mod.examples.map((ex) => {
                             const isActive = ex.id === activeExampleId;
+                            const showDetail = isActive || detailKey === ex.id;
+                            const shortLabel = `Ex ${ex.exercise}`;
                             return (
                               <li key={ex.id}>
                                 <button
                                   type="button"
                                   onClick={() => selectExercise(ex)}
-                                  className={`w-full rounded-md px-2 py-1.5 text-left text-[11px] leading-snug transition ${
+                                  className={`w-full rounded-xl px-3 py-2.5 text-left transition ${
                                     isActive
-                                      ? 'bg-brand-500 font-bold text-white'
-                                      : 'text-navy-100 hover:bg-white/10'
+                                      ? 'bg-brand-500 text-white'
+                                      : 'text-navy-50 hover:bg-white/10'
                                   }`}
-                                  title={ex.description}
                                 >
-                                  {ex.title}
+                                  <span className="block text-base font-bold">{shortLabel}</span>
+                                  {showDetail && (
+                                    <>
+                                      <span className="mt-1 block text-sm font-semibold leading-snug">
+                                        {ex.title.replace(/^M\d+\s·\sEx\d+\s·\s/, '')}
+                                      </span>
+                                      {ex.description && (
+                                        <span
+                                          className={`mt-2 block text-sm leading-relaxed ${
+                                            isActive ? 'text-brand-50' : 'text-navy-200'
+                                          }`}
+                                        >
+                                          {ex.description}
+                                        </span>
+                                      )}
+                                    </>
+                                  )}
                                 </button>
                               </li>
                             );

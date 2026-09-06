@@ -34,11 +34,14 @@ test.describe('ComputerGeek Academy — Python focus smoke', () => {
     await expect(page.getByRole('button', { name: /Trace program/i })).toBeVisible();
     await expect(page.getByRole('navigation', { name: /lab modules/i })).toBeVisible();
     await expect(page.getByText(/5 exercises each/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: /M1 · Ex1 · Interactive greeting/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Module 1/i }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /Ex 1/i }).first()).toBeVisible();
+    await expect(page.getByText(/Interactive greeting/i).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Module 1$/i }).or(page.getByRole('button', { name: /Module 1/i })).first()).toBeVisible();
     await page.getByRole('button', { name: /Week 8/i }).first().click();
     await page.getByRole('button', { name: /Module 32/i }).click();
-    await expect(page.getByRole('button', { name: /M32 · Ex5 · Capstone shape/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Ex 5/i }).last()).toBeVisible();
+    await page.getByRole('button', { name: /Ex 5/i }).last().click();
+    await expect(page.getByText(/Capstone shape/i).first()).toBeVisible();
     await expect(page.locator('textarea')).toBeVisible();
     await expect(page.getByText(/Memory/i).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /Exit lab/i })).toBeVisible();
@@ -47,7 +50,7 @@ test.describe('ComputerGeek Academy — Python focus smoke', () => {
   test('Python Code Lab can trace a simple program', async ({ page }) => {
     test.setTimeout(120_000);
     await page.goto('/labs/python');
-    await page.getByRole('button', { name: /M1 · Ex1 · Interactive greeting/i }).click();
+    await page.getByRole('button', { name: /Ex 1/i }).first().click();
     await page.getByRole('button', { name: /Trace program/i }).click();
 
     // Pyodide first load can take a while on cold CDN
