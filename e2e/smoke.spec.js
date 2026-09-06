@@ -33,15 +33,12 @@ test.describe('ComputerGeek Academy — Python focus smoke', () => {
     await page.goto('/labs/python');
     await expect(page.getByRole('button', { name: /Trace program/i })).toBeVisible();
     await expect(page.getByRole('navigation', { name: /lab modules/i })).toBeVisible();
-    await expect(page.getByText(/5 exercises each/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: /Ex 1/i }).first()).toBeVisible();
-    await expect(page.getByText(/Interactive greeting/i).first()).toBeVisible();
-    await expect(page.getByRole('button', { name: /^Module 1$/i }).or(page.getByRole('button', { name: /Module 1/i })).first()).toBeVisible();
+    await expect(page.getByText('One exercise per slide', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Slide 1/i }).first()).toBeVisible();
+    await expect(page.getByText(/Module 1: Python & Software Development Fundamentals/i).first()).toBeVisible();
     await page.getByRole('button', { name: /Week 8/i }).first().click();
     await page.getByRole('button', { name: /Module 32/i }).click();
-    await expect(page.getByRole('button', { name: /Ex 5/i }).last()).toBeVisible();
-    await page.getByRole('button', { name: /Ex 5/i }).last().click();
-    await expect(page.getByText(/Capstone shape/i).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /Slide 1/i }).last()).toBeVisible();
     await expect(page.locator('textarea')).toBeVisible();
     await expect(page.getByText(/Memory/i).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /Exit lab/i })).toBeVisible();
@@ -50,10 +47,10 @@ test.describe('ComputerGeek Academy — Python focus smoke', () => {
   test('Python Code Lab can trace a simple program', async ({ page }) => {
     test.setTimeout(120_000);
     await page.goto('/labs/python');
-    await page.getByRole('button', { name: /Ex 1/i }).first().click();
+    // Slide 15 in module 1 is "Your First Python Program" — open a concrete coding drill
+    await page.getByRole('button', { name: /Slide 15/i }).first().click();
     await page.getByRole('button', { name: /Trace program/i }).click();
 
-    // Pyodide first load can take a while on cold CDN
     await expect(page.getByText(/Step\s+1\s*\/\s*\d+/i)).toBeVisible({ timeout: 90_000 });
     await expect(page.getByText(/Memory boxes|Memory \(variables\)/i).first()).toBeVisible();
 
@@ -61,7 +58,7 @@ test.describe('ComputerGeek Academy — Python focus smoke', () => {
     if (await stepBtn.isEnabled()) {
       await stepBtn.click();
     }
-    await expect(page.locator('body')).toContainText(/name|age|ComputerGeek|Alex/i);
+    await expect(page.locator('body')).toContainText(/ComputerGeek|name|Hello/i);
   });
 
   test('courses catalog is Python-only', async ({ page }) => {

@@ -12,7 +12,7 @@ export default function PythonLab() {
       badge="Bootcamp lab"
       title="Python Visual Dry-Run Lab"
       subtitle="Pick a module from the left index, then Trace and Step — controls stay on screen."
-      tip="Index: Week → Module title → 5 exercises. Hide the panel for a wider workspace (Esc). First Trace downloads a tiny Python engine."
+      tip="Index follows slides_outline.md: Week → Module → Slide. Click a slide to load its drill. Hide the panel for a wider workspace (Esc)."
       examples={pythonExamples}
       defaultCode={pythonExamples[0].code}
       onRunTrace={onRunTrace}

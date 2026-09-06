@@ -3,8 +3,8 @@ import { ChevronDown, ChevronRight, PanelsTopLeft } from 'lucide-react';
 import { BOOTCAMP_LAB_WEEKS } from '../../data/labExamples';
 
 /**
- * Collapsible left TOC: Week → Module → exercises.
- * Readable font sizes only — click to expand and show the full title/description.
+ * Collapsible left TOC: Week → Module → one exercise per slide.
+ * Readable font sizes; click to show the full slide title / description.
  */
 export default function LabModuleToc({
   examples,
@@ -89,7 +89,7 @@ export default function LabModuleToc({
       <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-4">
         <div>
           <p className="text-sm font-bold uppercase tracking-wider text-brand-300">Index</p>
-          <p className="text-base font-bold">Modules · 5 exercises each</p>
+          <p className="text-base font-bold">One exercise per slide</p>
         </div>
         <button
           type="button"
@@ -104,7 +104,6 @@ export default function LabModuleToc({
       <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3" aria-label="Lab modules">
         {weeks.map((week) => {
           const weekOpen = expandedWeeks.has(week.week);
-          const weekDetail = detailKey === `week-${week.week}`;
           return (
             <div key={week.week} className="mb-2">
               <button
@@ -124,9 +123,9 @@ export default function LabModuleToc({
                   <span className="block text-base font-extrabold text-brand-300">
                     Week {week.week}
                   </span>
-                  {weekDetail || weekOpen ? (
+                  {weekOpen && (
                     <span className="mt-1 block text-sm leading-snug text-navy-100">{week.title}</span>
-                  ) : null}
+                  )}
                 </span>
               </button>
 
@@ -134,7 +133,6 @@ export default function LabModuleToc({
                 week.modules.map((mod) => {
                   const modKey = `${week.week}-${mod.module}`;
                   const modOpen = expandedModules.has(modKey);
-                  const modDetail = detailKey === `mod-${modKey}`;
                   return (
                     <div key={modKey} className="mb-1 ml-3 border-l-2 border-white/15 pl-3">
                       <button
@@ -154,7 +152,7 @@ export default function LabModuleToc({
                           <span className="block text-base font-bold text-white">
                             Module {mod.module}
                           </span>
-                          {(modDetail || modOpen) && (
+                          {modOpen && (
                             <span className="mt-1 block text-sm leading-snug text-navy-100">
                               {mod.moduleTitle}
                             </span>
@@ -167,7 +165,8 @@ export default function LabModuleToc({
                           {mod.examples.map((ex) => {
                             const isActive = ex.id === activeExampleId;
                             const showDetail = isActive || detailKey === ex.id;
-                            const shortLabel = `Ex ${ex.exercise}`;
+                            const slideNo = ex.slide || ex.exercise;
+                            const label = ex.slideTitle || ex.title;
                             return (
                               <li key={ex.id}>
                                 <button
@@ -179,11 +178,11 @@ export default function LabModuleToc({
                                       : 'text-navy-50 hover:bg-white/10'
                                   }`}
                                 >
-                                  <span className="block text-base font-bold">{shortLabel}</span>
+                                  <span className="block text-base font-bold">Slide {slideNo}</span>
                                   {showDetail && (
                                     <>
                                       <span className="mt-1 block text-sm font-semibold leading-snug">
-                                        {ex.title.replace(/^M\d+\s·\sEx\d+\s·\s/, '')}
+                                        {label}
                                       </span>
                                       {ex.description && (
                                         <span
